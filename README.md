@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/593f842a-d449-4619-bb3a-b564ab821404)ТВ-21 Лоєв Роман
+ТВ-21 Лоєв Роман
 
 Мета: Ознайомлення з багатопоточнісю в Java.
 
