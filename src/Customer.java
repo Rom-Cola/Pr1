@@ -1,6 +1,6 @@
 import java.util.Random;
 
-class Customer {
+public class Customer {
     private final String name;
 
     public Customer(String name) {

@@ -1,17 +1,23 @@
-import java.util.concurrent.Semaphore;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class Cafe {
-    private final Semaphore semaphore;
+
     private boolean open;
     private int workingTime;
-    private static int activeGuests = 0;
+    private static int activeCustomers = 0;
     private Barista barista;
+    private Queue<Customer> customersOrders = new ConcurrentLinkedDeque<>();
 
     public Cafe(int maxOrders, int workingTime) {
-        this.barista = new Barista();
-        this.semaphore = new Semaphore(maxOrders);
+        this.barista = new Barista(this, maxOrders);
         this.workingTime = workingTime;
         this.open = true;
+        new Thread(barista).start();
+    }
+
+    public Queue<Customer> getCustomersOrders() {
+        return customersOrders;
     }
 
     public int getWorkingTime() {
@@ -19,40 +25,24 @@ public class Cafe {
     }
 
     public void customerLeft() {
-        activeGuests--;
-        if (activeGuests == 0 && !isOpen()) {
+        activeCustomers--;
+        if (activeCustomers == 0 && !isOpen()) {
             barista.finishWork();
-            System.out.println("Бариста завершив роботу та пішов додому.");
+
         }
     }
 
     public void enterShop(Customer customer) throws InterruptedException {
-        activeGuests++;
-        System.out.println(customer.getName() + " увійшов/увійшла до кав'ярні та планує зробити замовлення.");
-        semaphore.acquire();
+        activeCustomers++;
+        System.out.println(Color.BLUE + customer.getName() + " увійшов/увійшла до кав'ярні та планує зробити замовлення." + Color.DEFAULT);
         Thread.sleep(1000);
-
-        serveCoffee(customer);
+        System.out.println(Color.BLUE + customer.getName() + " зробив/зробила замовлення." + Color.DEFAULT);
+        customersOrders.add(customer);
     }
 
-    public void serveCoffee(Customer customer) throws InterruptedException {
-        if (isOpen()) {
-            System.out.println(customer.getName() + " зробив/зробила замовлення.");
-            Thread.sleep(400);
-            System.out.println("Бариста готує каву для " + customer.getName());
-            Thread.sleep(3000);
-            System.out.println("Бариста завершив готування кави для " + customer.getName());
-        } else {
-            System.out.println("Баристі довелось відмовити " + customer.getName() + " у зв'язку з закриттям кав'ярні");
-        }
-
-        semaphore.release();
-        customerLeft();
-    }
-
-    public synchronized void closeShop() {
+    public synchronized void closeCafe() {
         this.open = false;
-        System.out.println("Кав'ярня зачинилась.");
+        System.out.println(Color.RED + "Кав'ярня зачинилась." + Color.DEFAULT);
         try {
             barista.waitToGoHome();
         } catch (InterruptedException e) {
