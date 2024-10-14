@@ -2,12 +2,6 @@ import java.util.Random;
 
 public class CafeRunner{
 
-    private Cafe cafe;
-
-    public CafeRunner(Cafe cafe) {
-        this.cafe = cafe;
-    }
-
     public static void main(String[] args) throws InterruptedException {
         Cafe cafe = new Cafe(2, 8000);
         Runnable openCafe = () -> {

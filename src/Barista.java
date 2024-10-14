@@ -29,7 +29,7 @@ public class Barista implements Runnable {
 
             System.out.println(Color.YELLOW +  "Бариста почав готувати каву для " +
                     customer.getName() + "(Бариста одночасно виконує " +
-                    (maxOrders - semaphore.availablePermits()) + " замовлень.)" + Color.DEFAULT);
+                    (maxOrders - semaphore.availablePermits()) + "/" + maxOrders + " замовлень.)" + Color.DEFAULT);
             Thread.sleep(3000);
             System.out.println(Color.GREEN + "Бариста завершив готування кави для " + customer.getName() + Color.DEFAULT);
         } else {
